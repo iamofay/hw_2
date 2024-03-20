@@ -9,7 +9,7 @@ from pydub import AudioSegment
 class MediaFile:
     uid = 1
 
-    def __init__(self, name, filetype, weight=None, crdate=None, chdate=None, owner=None, uid=None ):
+    def __init__(self, name, filetype, weight=None, crdate=None, chdate=None, owner=None, uid=None):
         self.name = name
         self.filetype = filetype
         self.weight = os.stat(name).st_size
@@ -28,7 +28,6 @@ class ImageFile(MediaFile):
         super().__init__(name, filetype, weight, crdate, chdate, owner, uid)
         self.solution = Image.open(name).size
         self.format = Image.open(name).format
-
 
     def conv(self):
         im = Image.open(self.name)
@@ -57,6 +56,7 @@ class ImageFile(MediaFile):
             f'Разрещение: {self.solution}\n'
             f'Формат: {self.format}')
 
+
 class VideoFile(MediaFile):
     def __init__(self, name, filetype, weight=None, crdate=None, chdate=None, owner=None, uid=None):
         super().__init__(name, filetype, weight, crdate, chdate, owner, uid)
@@ -70,9 +70,10 @@ class VideoFile(MediaFile):
         print(ffmpeg.input(vid))
         my_vid_stream = ffmpeg.input(vid)
         new_name = self.name.lower().split('.')[0] + '_c'
-        format = self.name.lower().split('.')[1]
-        my_vid_stream = my_vid_stream.video.hflip().output(f'{new_name}.{format}')
+        fformat = self.name.lower().split('.')[1]
+        my_vid_stream = my_vid_stream.video.hflip().output(f'{new_name}.{fformat}')
         ffmpeg.run(my_vid_stream)
+        print(f'Файл: {self.name} был сконвертирован в файл: {new_name}.{fformat}')
 
     def __str__(self):
         return (
@@ -93,7 +94,6 @@ class AudioFile(MediaFile):
         super().__init__(name, filetype, weight, crdate, chdate, owner, uid)
         self.bitrate = mutagen.File(self.name).info.bitrate
         self.len = mutagen.File(self.name).info.length
-
 
     def rev_file(self):
         afile = self.name
@@ -116,6 +116,7 @@ class AudioFile(MediaFile):
             f'Владелец: {self.owner}\n'
             f'Битрейт: {self.bitrate}\n'
             f'Длительность: {self.len}')
+
 
 def checkfolder(dir_path):
     # Определяем и выводим тип файла
@@ -161,7 +162,7 @@ def chfiletype(name):
 def main():
     # Запрашиваем у пользователя путь к папке
     # dir_path = input("Введите путь к папке: ")
-    dir_path = 'C:\examles'
+    dir_path = 'C:\examples'
     fpath = checkfolder(dir_path)
     chfile = MediaFile(fpath, chfiletype(fpath))
     if chfile.filetype == 'изображение':
