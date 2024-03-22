@@ -6,6 +6,8 @@ import mutagen
 from pydub import AudioSegment
 
 
+# Основной класс определяющий основные матаданные медиафайла:
+# имя, тип файла, вес, дата создания, дата изменения, владелец, уникальный идентификатор.
 class MediaFile:
     uid = 1
 
@@ -18,10 +20,14 @@ class MediaFile:
         self.owner = os.stat(name).st_uid
         self.uid += 1
 
+    # Функция удаления файла
     def file_remove(self):
         os.remove(self.name)
         print(f'Файл: {self.name} был удален')
 
+
+# Класс для изображений, в дополнении к основным методанным поределенным в классе MediaFile содержит:
+# Разрешение и формат
 
 class ImageFile(MediaFile):
     def __init__(self, name, filetype=None, weight=None, crdate=None, chdate=None, owner=None, uid=None):
@@ -29,6 +35,7 @@ class ImageFile(MediaFile):
         self.solution = Image.open(name).size
         self.format = Image.open(name).format
 
+    # Класс содержит фнункцию конвертации файла в ЧБ спектр
     def conv(self):
         im = Image.open(self.name)
         new_name = self.name.lower().split('.')[0]
@@ -44,6 +51,7 @@ class ImageFile(MediaFile):
                     dpi=self.solution)
         print(f'Файл: {self.name} был сконвертирован в файл: {new_name}_l.{format}')
 
+    # Класс содержит измененное описание вывода, которое позволяет вывести метаданные изображения
     def __str__(self):
         return (
             f'Метаданные файлаЖ'
@@ -57,6 +65,8 @@ class ImageFile(MediaFile):
             f'Формат: {self.format}')
 
 
+# Класс для видео, в дополнении к основным методанным поределенным в классе MediaFile содержит:
+# Кодек и длинну видео
 class VideoFile(MediaFile):
     def __init__(self, name, filetype, weight=None, crdate=None, chdate=None, owner=None, uid=None):
         super().__init__(name, filetype, weight, crdate, chdate, owner, uid)
@@ -64,6 +74,7 @@ class VideoFile(MediaFile):
         self.codec = self.vmeta['streams'][0]['codec_name']
         self.len = self.vmeta['streams'][0]['duration']
 
+    # Класс содержит фнункцию которая разворачивает видео на 90 градусов относительно горизонта
     def v_conv(self):
         vid = self.name
         print(f"{vid}")
@@ -75,6 +86,7 @@ class VideoFile(MediaFile):
         ffmpeg.run(my_vid_stream)
         print(f'Файл: {self.name} был сконвертирован в файл: {new_name}.{fformat}')
 
+    # Класс содержит измененное описание вывода, которое позволяет вывести метаданные изображения
     def __str__(self):
         return (
             f'Метаданные файлаЖ'
@@ -88,6 +100,8 @@ class VideoFile(MediaFile):
             f'Кодек: {self.codec}')
 
 
+# Класс для аудио, в дополнении к основным методанным поределенным в классе MediaFile содержит:
+# Длинну и битрейт
 class AudioFile(MediaFile):
     def __init__(self, name, filetype, weight=None, crdate=None, chdate=None, owner=None, bitrate=None, len=None,
                  uid=None):
@@ -95,6 +109,7 @@ class AudioFile(MediaFile):
         self.bitrate = mutagen.File(self.name).info.bitrate
         self.len = mutagen.File(self.name).info.length
 
+    # Класс содержит функцию, которая реверсирует файл
     def rev_file(self):
         afile = self.name
         aname = self.name.lower().split('.')[0]
@@ -105,6 +120,7 @@ class AudioFile(MediaFile):
         new_afile.export(f"{aname}_r.{aformat}", format=aformat)
         print(f'Файл: {self.name} был сконвертирован в {aname}_r.{aformat}')
 
+    # Класс содержит измененное описание вывода, которое позволяет вывести метаданные изображения
     def __str__(self):
         return (
             f'Метаданные файла:'
@@ -133,13 +149,7 @@ def checkfolder(dir_path):
     return dirfiles[chfile]
 
 
-# def chosefile(dirfiles):
-#     chfile = input('Введите номер файла:')
-#     count = 1
-#     for ffile, ftype in dirfiles:
-#         if count == chfile:
-#             return count, ffile, ftype
-#         count += 1
+# функция определения типа файла по расширению
 def chfiletype(name):
     # Словарь расширений файлов и их типов
     file_types = {
@@ -160,11 +170,12 @@ def chfiletype(name):
 
 
 def main():
-    # Запрашиваем у пользователя путь к папке
-    # dir_path = input("Введите путь к папке: ")
+    # Указываем путь до папки, можно использовать input и попросить пользователя ввести путь вкручную
     dir_path = 'C:\examples'
     fpath = checkfolder(dir_path)
     chfile = MediaFile(fpath, chfiletype(fpath))
+
+    #Логика, которая обеспечивает возможность выбрать файл и вызвать возможные функции, характерные для типа медиафайла.
     if chfile.filetype == 'изображение':
         selfile = ImageFile(chfile.name)
         print(selfile)
