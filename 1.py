@@ -20,7 +20,7 @@ class MediaFile:
         self.owner = os.stat(name).st_uid
         self.uid += 1
 
-    # Функция удаления файла
+    # Метод удаления
     def file_remove(self):
         os.remove(self.name)
         print(f'Файл: {self.name} был удален')
@@ -35,7 +35,7 @@ class ImageFile(MediaFile):
         self.solution = Image.open(name).size
         self.format = Image.open(name).format
 
-    # Класс содержит фнункцию конвертации файла в ЧБ спектр
+    # Класс содержит метод конвертации файла в ЧБ спектр
     def conv(self):
         im = Image.open(self.name)
         new_name = self.name.lower().split('.')[0]
@@ -74,7 +74,7 @@ class VideoFile(MediaFile):
         self.codec = self.vmeta['streams'][0]['codec_name']
         self.len = self.vmeta['streams'][0]['duration']
 
-    # Класс содержит фнункцию которая разворачивает видео на 90 градусов относительно горизонта
+    # Класс содержит метод, который разворачивает видео на 90 градусов относительно горизонта
     def v_conv(self):
         vid = self.name
         print(f"{vid}")
@@ -109,7 +109,7 @@ class AudioFile(MediaFile):
         self.bitrate = mutagen.File(self.name).info.bitrate
         self.len = mutagen.File(self.name).info.length
 
-    # Класс содержит функцию, которая реверсирует файл
+    # Класс содержит метод, который реверсирует файл
     def rev_file(self):
         afile = self.name
         aname = self.name.lower().split('.')[0]
