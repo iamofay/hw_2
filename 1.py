@@ -20,7 +20,7 @@ class MediaFile:
         self.owner = os.stat(name).st_uid
         self.uid += 1
 
-    # Метод удаления
+    # Метод удаления файла
     def file_remove(self):
         os.remove(self.name)
         print(f'Файл: {self.name} был удален')
